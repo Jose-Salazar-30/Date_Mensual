@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Mensual ❤️</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+        }
+        .app-container { 
+            background: #ffffff; 
+            border-radius: 15px; 
+            padding: 40px 30px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08); 
+            max-width: 450px; 
+            width: 100%; 
+            text-align: center; 
+            border-top: 8px solid #ff6b81;
+        }
+        .main-title {
+            color: #ff4757;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+        h2 { 
+            color: #2f3542; 
+            font-size: 20px; 
+            margin-bottom: 15px;
+        }
+        p.question-text { 
+            font-size: 18px; 
+            color: #57606f; 
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .btn { 
+            background: #ffffff; 
+            color: #2f3542; 
+            border: 2px solid #eccc68; 
+            padding: 15px; 
+            margin: 10px 0; 
+            width: 100%; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .btn:hover { 
+            background: #f1f2f6; 
+            border-color: #ffa502;
+            transform: scale(1.02);
+        }
+        .btn-primary {
+            background: #ff4757;
+            color: white;
+            border: none;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background: #ff6b81;
+            border: none;
+        }
+        .btn-email {
+            background: #3742fa;
+            color: white;
+            border: none;
+        }
+        .btn-email:hover {
+            background: #5352ed;
+            border: none;
+        }
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2f3542;
+            margin-bottom: 8px;
+        }
+        input[type="date"], input[type="time"] { 
+            width: 100%; 
+            padding: 15px; 
+            border: 2px solid #dfe4ea; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            outline: none;
+            transition: border-color 0.3s;
+            color: #2f3542;
+            font-family: inherit;
+        }
+        input[type="date"]:focus, input[type="time"]:focus {
+            border-color: #ff4757;
+        }
+        .hidden { 
+            display: none; 
+        }
+        .summary-list {
+            text-align: left;
+            background: #f1f2f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: #2f3542;
+            font-size: 16px;
+        }
+        .summary-list ul {
+            margin: 10px 0 0 20px;
+            padding: 0;
+        }
+        .summary-list li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h1 class="main-title">Escoger nuestra date de fin de semana mensual 🗓️❤️</h1>
+
+        <!-- SECCIÓN 1: EL QUIZ -->
+        <div id="quiz-section">
+            <h2 id="question-text" class="question-text">Cargando...</h2>
+            <div id="options-container"></div>
+        </div>
+
+        <!-- SECCIÓN 2: FECHA Y HORA -->
+        <div id="date-section" class="hidden">
+            <h2>¡Ya casi estamos! ⏰</h2>
+            <p class="question-text">Ya tomé nota de tus preferencias. Ahora elige el momento perfecto:</p>
+            
+            <div class="input-group">
+                <label>¿Qué fecha te queda mejor?</label>
+                <input type="date" id="date-picker">
+            </div>
+
+            <div class="input-group">
+                <label>¿A qué hora nos vemos?</label>
+                <input type="time" id="time-picker">
+            </div>
+
+            <button class="btn btn-primary" onclick="confirmDate()">Confirmar Fecha y Hora</button>
+        </div>
+
+        <!-- SECCIÓN 3: RESULTADO FINAL Y ENVÍO -->
+        <div id="result-section" class="hidden">
+            <h2>¡Plan Confirmado! 🎉</h2>
+            <p id="final-message"></p>
+            
+            <!-- Botón para enviar por correo -->
+            <button class="btn btn-email" onclick="enviarCorreo()">Enviar respuestas a mi novio 💌</button>
+            <button class="btn" onclick="location.reload()" style="margin-top: 15px; border-color: #dfe4ea;">Volver a empezar</button>
+        </div>
+    </div>
+
+    <script>
+        // Preguntas incluyendo la vestimenta
+        const questions = [
+            { 
+                q: "¿Qué tipo de ambiente se te antoja más?", 
+                options: ["Algo relax en casa 🍿", "Salir a caminar y explorar 🌳", "Un lugar bonito y tranquilo ✨"] 
+            },
+            { 
+                q: "¿Qué te gustaría comer?", 
+                options: ["Comida rápida (hamburguesas/pizza) 🍔", "Comida de restaurante 🍝", "Solo un cafecito y postre ☕🍰"] 
+            },
+            {
+                q: "¿Qué tipo de vestimenta te gustaría usar?",
+                options: ["Casual y súper cómoda 👟", "Arregladita pero relax 👗", "Formal y Elegante ✨"]
+            }
+        ];
+        
+        let currentQIndex = 0;
+        let userAnswers = [];
+        let fechaFormateada = "";
+        let horaSeleccionada = "";
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const quizSection = document.getElementById('quiz-section');
+        const dateSection = document.getElementById('date-section');
+        const resultSection = document.getElementById('result-section');
+        
+        const datePicker = document.getElementById('date-picker');
+        const timePicker = document.getElementById('time-picker');
+        const finalMessage = document.getElementById('final-message');
+
+        function loadQuestion() {
+            if (currentQIndex >= questions.length) {
+                showDateSection();
+                return;
+            }
+            
+            const currentQ = questions[currentQIndex];
+            questionText.textContent = currentQ.q;
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt;
+                btn.className = 'btn';
+                btn.onclick = () => selectOption(opt);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(opt) {
+            userAnswers.push(opt);
+            currentQIndex++;
+            loadQuestion();
+        }
+
+        function showDateSection() {
+            quizSection.classList.add('hidden');
+            dateSection.classList.remove('hidden');
+        }
+
+        function confirmDate() {
+            const selectedDate = datePicker.value;
+            horaSeleccionada = timePicker.value;
+            
+            if (!selectedDate || !horaSeleccionada) {
+                alert("¡Porfa escoge una fecha y una hora! 🥺");
+                return;
+            }
+            
+            const formatOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            fechaFormateada = new Date(selectedDate).toLocaleDateString('es-ES', formatOpts);
+
+            dateSection.classList.add('hidden');
+            resultSection.classList.remove('hidden');
+            
+            let answersHtml = userAnswers.map((ans, index) => {
+                let categoria = ["Ambiente", "Comida", "Vestimenta"][index];
+                return `<li><b>${categoria}:</b> ${ans}</li>`;
+            }).join('');
+            
+            finalMessage.innerHTML = `
+                Nuestra date será el <b>${fechaFormateada}</b> a las <b>${horaSeleccionada}</b>.<br>
+                <div class="summary-list">
+                    <ul>${answersHtml}</ul>
+                </div>
+                <br><span style="color: #ff4757; font-weight: bold; font-size: 18px;">¡Me muero de ganas! ❤️</span>
+            `;
+        }
+
+        function enviarCorreo() {
+            // AQUÍ DEBES PONER TU CORREO ELECTRÓNICO
+            const correoDestino = "josejuliansalazarmelgar@gmail.com"; 
+            
+            const asunto = encodeURIComponent("¡Plan de nuestra Date Mensual Listo! ❤️");
+            
+            let cuerpoMensaje = "Hola José, aquí están mis elecciones para nuestra próxima date:\n\n";
+            
+            userAnswers.forEach((ans, index) => {
+                let categoria = ["Ambiente", "Comida", "Vestimenta"][index];
+                cuerpoMensaje += `- ${categoria}: ${ans}\n`;
+            });
+            
+            cuerpoMensaje += `\n📅 Fecha: ${fechaFormateada}`;
+            cuerpoMensaje += `\n⏰ Hora: ${horaSeleccionada}\n\n`;
+            cuerpoMensaje += "¡Me muero de ganas! ❤️";
+
+            // Esto abrirá la aplicación de correo de tu novia (Gmail, Outlook, Mail de iPhone, etc.)
+            window.location.href = `mailto:${correoDestino}?subject=${asunto}&body=${encodeURIComponent(cuerpoMensaje)}`;
+        }
+
+        loadQuestion();
+    </script>
+
+</body>
+</html>
