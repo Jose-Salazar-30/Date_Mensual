@@ -74,13 +74,13 @@
             background: #ff6b81;
             border: none;
         }
-        .btn-email {
-            background: #3742fa;
+        .btn-excel {
+            background: #20bf6b;
             color: white;
             border: none;
         }
-        .btn-email:hover {
-            background: #5352ed;
+        .btn-excel:hover {
+            background: #26de81;
             border: none;
         }
         .input-group {
@@ -164,14 +164,16 @@
             <h2>¡Plan Confirmado! 🎉</h2>
             <p id="final-message"></p>
             
-            <!-- Botón para enviar por correo -->
-            <button class="btn btn-email" onclick="enviarCorreo()">Enviar respuestas a mi novio 💌</button>
+            <!-- Botón para guardar en Excel -->
+            <button class="btn btn-excel" onclick="guardarEnExcel()">Confirmar y Guardar Respuestas ✨</button>
             <button class="btn" onclick="location.reload()" style="margin-top: 15px; border-color: #dfe4ea;">Volver a empezar</button>
         </div>
     </div>
 
     <script>
-        // Preguntas incluyendo la vestimenta
+        // --- AQUÍ PEGARÁS LA URL QUE TE DÉ GOOGLE SCRIPT ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxqAxUJYhepePAIKNTR_Fa8Mgx0Vj1x51LTtHQBIX22WMw9-lwyI7ZYk6H87hjT-Wdd/exec'; 
+
         const questions = [
             { 
                 q: "¿Qué tipo de ambiente se te antoja más?", 
@@ -257,29 +259,44 @@
                 <div class="summary-list">
                     <ul>${answersHtml}</ul>
                 </div>
-                <br><span style="color: #ff4757; font-weight: bold; font-size: 18px;">¡Me muero de ganas! ❤️</span>
             `;
         }
 
-        function enviarCorreo() {
-            // AQUÍ DEBES PONER TU CORREO ELECTRÓNICO
-            const correoDestino = "josejuliansalazarmelgar@gmail.com"; 
-            
-            const asunto = encodeURIComponent("¡Plan de nuestra Date Mensual Listo! ❤️");
-            
-            let cuerpoMensaje = "Hola José, aquí están mis elecciones para nuestra próxima date:\n\n";
-            
-            userAnswers.forEach((ans, index) => {
-                let categoria = ["Ambiente", "Comida", "Vestimenta"][index];
-                cuerpoMensaje += `- ${categoria}: ${ans}\n`;
-            });
-            
-            cuerpoMensaje += `\n📅 Fecha: ${fechaFormateada}`;
-            cuerpoMensaje += `\n⏰ Hora: ${horaSeleccionada}\n\n`;
-            cuerpoMensaje += "¡Me muero de ganas! ❤️";
+        function guardarEnExcel() {
+            if (scriptURL === 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
+                alert("⚠️ Aún no has configurado el enlace de Google Sheets en el código.");
+                return;
+            }
 
-            // Esto abrirá la aplicación de correo de tu novia (Gmail, Outlook, Mail de iPhone, etc.)
-            window.location.href = `mailto:${correoDestino}?subject=${asunto}&body=${encodeURIComponent(cuerpoMensaje)}`;
+            const btn = document.querySelector('.btn-excel');
+            btn.innerText = "Guardando... ⏳";
+            btn.disabled = true;
+
+            const datos = {
+                ambiente: userAnswers[0],
+                comida: userAnswers[1],
+                vestimenta: userAnswers[2],
+                fecha: fechaFormateada,
+                hora: horaSeleccionada
+            };
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(() => {
+                btn.innerText = "¡Guardado con éxito! ✅";
+                alert("¡Tus elecciones se han guardado para la date! ❤️");
+            })
+            .catch(error => {
+                btn.innerText = "Error al guardar ❌";
+                btn.disabled = false;
+                alert("Hubo un error de conexión, intenta de nuevo.");
+            });
         }
 
         loadQuestion();
