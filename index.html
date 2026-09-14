@@ -171,7 +171,7 @@
     </div>
 
     <script>
-        // --- AQUÍ PEGARÁS LA URL QUE TE DIO GOOGLE SCRIPT ---
+        // Aquí está tu enlace configurado correctamente
         const scriptURL = 'https://script.google.com/macros/s/AKfycby7qpBaS4t31Hyu2MU6GQMg3LstxZj1jJjFW-ERMvdaAcW8kmiYySQ_8YK_0iBj9LZC/exec'; 
 
         const questions = [
@@ -263,12 +263,6 @@
         }
 
         function guardarEnExcel() {
-            // Verificamos si sigues teniendo el texto de ejemplo
-            if (scriptURL === 'https://script.google.com/macros/s/AKfycby7qpBaS4t31Hyu2MU6GQMg3LstxZj1jJjFW-ERMvdaAcW8kmiYySQ_8YK_0iBj9LZC/exec') {
-                alert("⚠️ Aún no has configurado el enlace de Google Sheets en el código.");
-                return;
-            }
-
             const btn = document.querySelector('.btn-excel');
             btn.innerText = "Guardando... ⏳";
             btn.disabled = true;
